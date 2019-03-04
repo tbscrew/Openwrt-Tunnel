@@ -11,6 +11,7 @@ mkdir -p /usr/bin/assh/
 echo -e "blacksheepID\nxxxx\n22\nvip.jagoanssh.com\n" > /usr/bin/assh/akun.txt
 fi
 ################################################################
+cdir="/usr/bin"
 cekscreen=$(ls /usr/sbin/|grep screen);
 cekopenssl=$(ls /usr/bin/|grep openssl);
 cekredsocks=$(ls /usr/sbin|grep redsocks);
