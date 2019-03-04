@@ -1181,7 +1181,7 @@ echo -e " \e[36;1mProses update akan mereset profile dan akunssh anda.\e[0m"
 echo -e " \e[32;1m*******************************************************\e[0m"
 read -p " Are you sure you want to continue? <y/N> " prompt
 if [[ $prompt == "y" || $prompt == "Y" || $prompt == "yes" || $prompt == "Yes" ]]; then
-gas=$(wget --no-check-certificate -N https://raw.githubusercontent.com/tbscrew/Openwrt-Tunnel/master/xderm -P /usr/bin && chmod +x /usr/bin/xderm)
+gas=$(wget --no-check-certificate -N https://github.com/tbscrew/Openwrt-Tunnel/raw/master/xderm -P /usr/bin && chmod +x /usr/bin/xderm)
 echo -e "                       \e[36;1mDownload selesai...\e[0m"
 echo
 exit
@@ -1267,6 +1267,6 @@ echo -e "\e[32;1m##\e[0m \e[36;3mxderm stop\e[0m    \e[36;1m(Hentikan Proses SSH
 echo -e "\e[32;1m##\e[0m \e[36;3mxderm swsi\e[0m    \e[36;1m(Cari IP > Mulai SSH)\e[0m                \e[32;1m##\e[0m"
 echo -e "\e[32;1m##\e[0m \e[36;3mxderm update\e[0m  \e[36;1m(Update XDERM versi terbaru)\e[0m         \e[32;1m##\e[0m"
 echo -e "\e[32;1m########################################################\e[0m"
-echo -e "              \e[33;1mCurrent versi 3.0 Beta-Final\e[0m"
+echo -e "              \e[33;1mCurrent versi 3.1 Beta-Final\e[0m"
 echo -e "              \e[36;1mCopyright\e[0m\e[31;1m@\e[0m\e[34;1m FB\e[0m\e[31;1m:\e[0m\e[33;1mOpenwrt Tunnel\e[0m"
 echo
