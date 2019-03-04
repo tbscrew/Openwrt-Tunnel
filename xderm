@@ -10,7 +10,10 @@ if [[ ! -e /usr/bin/assh/akun.txt ]]; then
 mkdir -p /usr/bin/assh/
 echo -e "blacksheepID\nxxxx\n22\nvip.jagoanssh.com\n" > /usr/bin/assh/akun.txt
 fi
-cdir="/usr/bin";
+################################################################
+################################################################
+ start () {
+ 
 cekscreen=$(ls /usr/sbin/|grep screen);
 cekopenssl=$(ls /usr/bin/|grep openssl);
 cekredsocks=$(ls /usr/sbin|grep redsocks);
@@ -31,9 +34,6 @@ cekssh=$(ls /usr/bin/assh|grep akun.txt);
 [[ ! -z $cekscreen ]] || { echo -e "SCREEN belum terinstall !!\nSilahkan ketik xderm setup";exit; }
 [[ ! -z $ceksshpass ]] || { echo -e "SSHPASS belum terinstall !!\nSilahkan ketik xderm setup";exit; }
 
-################################################################
-################################################################
- start () {
 clear
 echo -e " \e[32;1m#######################################################\e[0m"
 echo -e " \e[32;1m##\e[0m               \e[35;1mXDERM SSH Auto Launcher             \e[0m\e[32;1m##\e[0m"
@@ -1110,8 +1110,8 @@ echo -e " \e[36;1mProses update akan mereset profile dan akunssh anda.\e[0m"
 echo -e " \e[32;1m*******************************************************\e[0m"
 read -p " Are you sure you want to continue? <y/N> " prompt
 if [[ $prompt == "y" || $prompt == "Y" || $prompt == "yes" || $prompt == "Yes" ]]
-then
-gas=$(wget --no-check-certificate -N https://raw.githubusercontent.com/tbscrew/xderm/master/xderm -P /usr/bin && chmod +x /usr/bin/xderm)
+
+gas=$(wget --no-check-certificate -N https://raw.githubusercontent.com/tbscrew/Openwrt-Tunnel/master/xderm -P /usr/bin && chmod +x /usr/bin/xderm)
 echo -e "                       \e[36;1mDownload selesai...\e[0m"
 echo
 exit
