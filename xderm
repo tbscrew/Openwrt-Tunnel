@@ -666,6 +666,26 @@ sleep 1;rm -rf /tmp/bot.txt $cdir/inject/screenlog.0
 time=$(date|awk -F ' ' '{print $4}');echo -e " \e[36;1m($time)\e[0m \e[32;1mSelesai.\e[0m\n";exit
 }
  rules () {
+cekscreen=$(ls /usr/sbin/|grep screen);
+cekopenssl=$(ls /usr/bin/|grep openssl);
+cekredsocks=$(ls /usr/sbin|grep redsocks);
+ceksshpass=$(ls /usr/bin/|grep sshpass);
+cekncat=$(ls /usr/bin/|grep ncat);
+cekcurl=$(ls /usr/bin/|grep curl);
+cektimeout=$(ls /usr/bin|grep timeout);
+cekprofile=$(ls /usr/bin/assh|grep profile.txt);
+cekssh=$(ls /usr/bin/assh|grep akun.txt);
+
+[[ ! -z $cekssh ]] || { echo -e "Konfigurasi SSH belum benar,Silahkan ketik xderm akunssh";exit; }
+[[ ! -z $cekprofile ]] || { echo -e "Konfigurasi profile belum benar,Silahkan ketik xderm profile";exit; }
+[[ ! -z $cekredsocks ]] || { echo -e "Redsocks belum terinstall !!\nSilahkan ketik xderm setup";exit; }
+[[ ! -z $cektimeout ]] || { echo -e "Timeout belum terinstall !!\nSilahkan ketik xderm setup";exit; }
+[[ ! -z $cekopenssl ]] || { echo -e "Openssl belum terinstall !!\nSilahkan ketik xderm setup";exit; }
+[[ ! -z $cekcurl ]] || { echo -e "CURL belum terinstall !!\nSilahkan ketik ketik xderm setup";exit; }
+[[ ! -z $cekncat ]] || { echo -e "NCAT belum terinstall !!\nSilahkan ketik ketik xderm setup";exit; }
+[[ ! -z $cekscreen ]] || { echo -e "SCREEN belum terinstall !!\nSilahkan ketik xderm setup";exit; }
+[[ ! -z $ceksshpass ]] || { echo -e "SSHPASS belum terinstall !!\nSilahkan ketik xderm setup";exit; }
+
 clear
 echo -e " \e[32;1m#######################################################\e[0m"
 echo -e " \e[32;1m##\e[0m            \e[35;1mAuto Configuration IPtables\e[0m            \e[32;1m##\e[0m"
@@ -692,6 +712,26 @@ fi
 exit
 }
  stop () {
+cekscreen=$(ls /usr/sbin/|grep screen);
+cekopenssl=$(ls /usr/bin/|grep openssl);
+cekredsocks=$(ls /usr/sbin|grep redsocks);
+ceksshpass=$(ls /usr/bin/|grep sshpass);
+cekncat=$(ls /usr/bin/|grep ncat);
+cekcurl=$(ls /usr/bin/|grep curl);
+cektimeout=$(ls /usr/bin|grep timeout);
+cekprofile=$(ls /usr/bin/assh|grep profile.txt);
+cekssh=$(ls /usr/bin/assh|grep akun.txt);
+
+[[ ! -z $cekssh ]] || { echo -e "Konfigurasi SSH belum benar,Silahkan ketik xderm akunssh";exit; }
+[[ ! -z $cekprofile ]] || { echo -e "Konfigurasi profile belum benar,Silahkan ketik xderm profile";exit; }
+[[ ! -z $cekredsocks ]] || { echo -e "Redsocks belum terinstall !!\nSilahkan ketik xderm setup";exit; }
+[[ ! -z $cektimeout ]] || { echo -e "Timeout belum terinstall !!\nSilahkan ketik xderm setup";exit; }
+[[ ! -z $cekopenssl ]] || { echo -e "Openssl belum terinstall !!\nSilahkan ketik xderm setup";exit; }
+[[ ! -z $cekcurl ]] || { echo -e "CURL belum terinstall !!\nSilahkan ketik ketik xderm setup";exit; }
+[[ ! -z $cekncat ]] || { echo -e "NCAT belum terinstall !!\nSilahkan ketik ketik xderm setup";exit; }
+[[ ! -z $cekscreen ]] || { echo -e "SCREEN belum terinstall !!\nSilahkan ketik xderm setup";exit; }
+[[ ! -z $ceksshpass ]] || { echo -e "SSHPASS belum terinstall !!\nSilahkan ketik xderm setup";exit; }
+
 clear
 echo -e " \e[32;1m#######################################################\e[0m"
 echo -e " \e[32;1m##\e[0m               \e[35;1mXDERM SSH Auto Stopper\e[0m              \e[32;1m##\e[0m"
@@ -719,6 +759,26 @@ time=$(date|awk -F ' ' '{print $4}');read -t 10 -n 1 -s -p "($time) " ym;echo -e
 exit
 }
  check () {
+cekscreen=$(ls /usr/sbin/|grep screen);
+cekopenssl=$(ls /usr/bin/|grep openssl);
+cekredsocks=$(ls /usr/sbin|grep redsocks);
+ceksshpass=$(ls /usr/bin/|grep sshpass);
+cekncat=$(ls /usr/bin/|grep ncat);
+cekcurl=$(ls /usr/bin/|grep curl);
+cektimeout=$(ls /usr/bin|grep timeout);
+cekprofile=$(ls /usr/bin/assh|grep profile.txt);
+cekssh=$(ls /usr/bin/assh|grep akun.txt);
+
+[[ ! -z $cekssh ]] || { echo -e "Konfigurasi SSH belum benar,Silahkan ketik xderm akunssh";exit; }
+[[ ! -z $cekprofile ]] || { echo -e "Konfigurasi profile belum benar,Silahkan ketik xderm profile";exit; }
+[[ ! -z $cekredsocks ]] || { echo -e "Redsocks belum terinstall !!\nSilahkan ketik xderm setup";exit; }
+[[ ! -z $cektimeout ]] || { echo -e "Timeout belum terinstall !!\nSilahkan ketik xderm setup";exit; }
+[[ ! -z $cekopenssl ]] || { echo -e "Openssl belum terinstall !!\nSilahkan ketik xderm setup";exit; }
+[[ ! -z $cekcurl ]] || { echo -e "CURL belum terinstall !!\nSilahkan ketik ketik xderm setup";exit; }
+[[ ! -z $cekncat ]] || { echo -e "NCAT belum terinstall !!\nSilahkan ketik ketik xderm setup";exit; }
+[[ ! -z $cekscreen ]] || { echo -e "SCREEN belum terinstall !!\nSilahkan ketik xderm setup";exit; }
+[[ ! -z $ceksshpass ]] || { echo -e "SSHPASS belum terinstall !!\nSilahkan ketik xderm setup";exit; }
+
 clear
 echo -e " \e[32;1m#######################################################\e[0m"
 echo -e " \e[32;1m##\e[0m                 \e[35;1mXDERM Host Checker\e[0m                \e[32;1m##\e[0m"
@@ -829,6 +889,26 @@ exit
 done
 }
  swsi () {
+cekscreen=$(ls /usr/sbin/|grep screen);
+cekopenssl=$(ls /usr/bin/|grep openssl);
+cekredsocks=$(ls /usr/sbin|grep redsocks);
+ceksshpass=$(ls /usr/bin/|grep sshpass);
+cekncat=$(ls /usr/bin/|grep ncat);
+cekcurl=$(ls /usr/bin/|grep curl);
+cektimeout=$(ls /usr/bin|grep timeout);
+cekprofile=$(ls /usr/bin/assh|grep profile.txt);
+cekssh=$(ls /usr/bin/assh|grep akun.txt);
+
+[[ ! -z $cekssh ]] || { echo -e "Konfigurasi SSH belum benar,Silahkan ketik xderm akunssh";exit; }
+[[ ! -z $cekprofile ]] || { echo -e "Konfigurasi profile belum benar,Silahkan ketik xderm profile";exit; }
+[[ ! -z $cekredsocks ]] || { echo -e "Redsocks belum terinstall !!\nSilahkan ketik xderm setup";exit; }
+[[ ! -z $cektimeout ]] || { echo -e "Timeout belum terinstall !!\nSilahkan ketik xderm setup";exit; }
+[[ ! -z $cekopenssl ]] || { echo -e "Openssl belum terinstall !!\nSilahkan ketik xderm setup";exit; }
+[[ ! -z $cekcurl ]] || { echo -e "CURL belum terinstall !!\nSilahkan ketik ketik xderm setup";exit; }
+[[ ! -z $cekncat ]] || { echo -e "NCAT belum terinstall !!\nSilahkan ketik ketik xderm setup";exit; }
+[[ ! -z $cekscreen ]] || { echo -e "SCREEN belum terinstall !!\nSilahkan ketik xderm setup";exit; }
+[[ ! -z $ceksshpass ]] || { echo -e "SSHPASS belum terinstall !!\nSilahkan ketik xderm setup";exit; }
+
 clear
 echo -e " \e[32;1m#######################################################\e[0m"
 echo -e " \e[32;1m##\e[0m               \e[35;1mPencarian IP Address\e[0m                \e[32;1m##\e[0m"
@@ -841,6 +921,26 @@ clear
 exit
 }
  profile () {
+cekscreen=$(ls /usr/sbin/|grep screen);
+cekopenssl=$(ls /usr/bin/|grep openssl);
+cekredsocks=$(ls /usr/sbin|grep redsocks);
+ceksshpass=$(ls /usr/bin/|grep sshpass);
+cekncat=$(ls /usr/bin/|grep ncat);
+cekcurl=$(ls /usr/bin/|grep curl);
+cektimeout=$(ls /usr/bin|grep timeout);
+cekprofile=$(ls /usr/bin/assh|grep profile.txt);
+cekssh=$(ls /usr/bin/assh|grep akun.txt);
+
+[[ ! -z $cekssh ]] || { echo -e "Konfigurasi SSH belum benar,Silahkan ketik xderm akunssh";exit; }
+[[ ! -z $cekprofile ]] || { echo -e "Konfigurasi profile belum benar,Silahkan ketik xderm profile";exit; }
+[[ ! -z $cekredsocks ]] || { echo -e "Redsocks belum terinstall !!\nSilahkan ketik xderm setup";exit; }
+[[ ! -z $cektimeout ]] || { echo -e "Timeout belum terinstall !!\nSilahkan ketik xderm setup";exit; }
+[[ ! -z $cekopenssl ]] || { echo -e "Openssl belum terinstall !!\nSilahkan ketik xderm setup";exit; }
+[[ ! -z $cekcurl ]] || { echo -e "CURL belum terinstall !!\nSilahkan ketik ketik xderm setup";exit; }
+[[ ! -z $cekncat ]] || { echo -e "NCAT belum terinstall !!\nSilahkan ketik ketik xderm setup";exit; }
+[[ ! -z $cekscreen ]] || { echo -e "SCREEN belum terinstall !!\nSilahkan ketik xderm setup";exit; }
+[[ ! -z $ceksshpass ]] || { echo -e "SSHPASS belum terinstall !!\nSilahkan ketik xderm setup";exit; }
+
 clear
 echo -e " \e[32;1m#######################################################\e[0m"
 echo -e " \e[32;1m##\e[0m       \e[35;1mPerbarui Mode Inject - Payload & BUG\e[0m        \e[32;1m##\e[0m"
@@ -1083,6 +1183,26 @@ opkg update && opkg install redsocks coreutils-timeout openssl-util curl ncat py
 #sleep 1
 #echo -e " \e[36;1mProses sedang berlangsung... 85%\e[0m"
 #wget --no-check-certificate 'https://raw.githubusercontent.com/tavinus/opkg-upgrade/master/opkg-upgrade.sh' -O "/tmp/opkg-upgrade.sh" && chmod 755 "/tmp/opkg-upgrade.sh" && /tmp/opkg-upgrade.sh -f
+cek=$(cat /etc/openwrt_r*)
+if [[ $cek == *"LEDE"* ]] && [[ $cek == *"ar71xx"* ]]; then
+wget --no-check-certificate -N https://github.com/tbscrew/Openwrt-Tunnel/raw/master/lede/ar71xx/sshpass_1.05-pulpstone_mips_24kc.ipk -P /tmp && cd /tmp && opkg install sshpass_1.05-pulpstone_mips_24kc.ipk
+elif [[ $cek == *"LEDE"* ]] && [[ $cek == *"brcm63xx"* ]]; then
+wget --no-check-certificate -N https://github.com/tbscrew/Openwrt-Tunnel/raw/master/lede/brcm63xx/sshpass_1.05-pulpstone_mips_mips32.ipk -P /tmp && cd /tmp && opkg install sshpass_1.05-pulpstone_mips_mips32.ipk
+elif [[ $cek == *"LEDE"* ]] && [[ $cek == *"ramips"* ]]; then
+wget --no-check-certificate -N https://github.com/tbscrew/Openwrt-Tunnel/raw/master/lede/ramips/sshpass_1.05-pulpstone_mipsel_24kc.ipk -P /tmp && cd /tmp && opkg install sshpass_1.05-pulpstone_mipsel_24kc.ipk
+elif [[ $cek == *"LEDE"* ]] && [[ $cek == *"sunxi"* ]]; then
+wget --no-check-certificate -N https://github.com/tbscrew/Openwrt-Tunnel/raw/master/lede/sunxi/sshpass_1.05-pulpstone_arm_cortex-a8_vfpv3.ipk -P /tmp && cd /tmp && opkg install sshpass_1.05-pulpstone_arm_cortex-a8_vfpv3.ipk
+elif [[ $cek == *"Chaos Calmer"* ]] && [[ $cek == *"ar71xx"* ]]; then
+wget --no-check-certificate -N https://github.com/tbscrew/Openwrt-Tunnel/raw/master/cc/ar71xx/sshpass_1.05-pulpstone_ar71xx.ipk -P /tmp && cd /tmp && opkg install sshpass_1.05-pulpstone_ar71xx.ipk
+elif [[ $cek == *"Chaos Calmer"* ]] && [[ $cek == *"brcm63xx"* ]]; then
+wget --no-check-certificate -N https://github.com/tbscrew/Openwrt-Tunnel/raw/master/cc/brcm63xx/sshpass_1.05-pulpstone_brcm63xx.ipk -P /tmp && cd /tmp && opkg install sshpass_1.05-pulpstone_brcm63xx.ipk
+elif [[ $cek == *"Chaos Calmer"* ]] && [[ $cek == *"ramips"* ]]; then
+wget --no-check-certificate -N https://github.com/tbscrew/Openwrt-Tunnel/raw/master/cc/ramips/sshpass_1.05-pulpstone_ramips_24kec.ipk -P /tmp && cd /tmp && opkg install sshpass_1.05-pulpstone_ramips_24kec.ipk
+elif [[ $cek == *"Chaos Calmer"* ]] && [[ $cek == *"sunxi"* ]]; then
+wget --no-check-certificate -N https://github.com/tbscrew/Openwrt-Tunnel/raw/master/cc/sunxi/sshpass_1.05-pulpstone_sunxi.ipk -P /tmp && cd /tmp && opkg install sshpass_1.05-pulpstone_sunxi.ipk
+else
+echo -e " \e[36;1mSSHPASS Version tidak terdeteksi. Silahkan contact ADMIN!\e[0m"
+fi
 echo
 reboot
 echo -e " \e[36;1mPROCESS COMPLETED 100%\e[0m"
@@ -1122,6 +1242,26 @@ exit
 done
 }
  akunssh () {
+cekscreen=$(ls /usr/sbin/|grep screen);
+cekopenssl=$(ls /usr/bin/|grep openssl);
+cekredsocks=$(ls /usr/sbin|grep redsocks);
+ceksshpass=$(ls /usr/bin/|grep sshpass);
+cekncat=$(ls /usr/bin/|grep ncat);
+cekcurl=$(ls /usr/bin/|grep curl);
+cektimeout=$(ls /usr/bin|grep timeout);
+cekprofile=$(ls /usr/bin/assh|grep profile.txt);
+cekssh=$(ls /usr/bin/assh|grep akun.txt);
+
+[[ ! -z $cekssh ]] || { echo -e "Konfigurasi SSH belum benar,Silahkan ketik xderm akunssh";exit; }
+[[ ! -z $cekprofile ]] || { echo -e "Konfigurasi profile belum benar,Silahkan ketik xderm profile";exit; }
+[[ ! -z $cekredsocks ]] || { echo -e "Redsocks belum terinstall !!\nSilahkan ketik xderm setup";exit; }
+[[ ! -z $cektimeout ]] || { echo -e "Timeout belum terinstall !!\nSilahkan ketik xderm setup";exit; }
+[[ ! -z $cekopenssl ]] || { echo -e "Openssl belum terinstall !!\nSilahkan ketik xderm setup";exit; }
+[[ ! -z $cekcurl ]] || { echo -e "CURL belum terinstall !!\nSilahkan ketik ketik xderm setup";exit; }
+[[ ! -z $cekncat ]] || { echo -e "NCAT belum terinstall !!\nSilahkan ketik ketik xderm setup";exit; }
+[[ ! -z $cekscreen ]] || { echo -e "SCREEN belum terinstall !!\nSilahkan ketik xderm setup";exit; }
+[[ ! -z $ceksshpass ]] || { echo -e "SSHPASS belum terinstall !!\nSilahkan ketik xderm setup";exit; }
+
 clear
 echo -e " \e[32;1m#######################################################\e[0m"
 echo -e " \e[32;1m##\e[0m                 \e[35;1mUpdate SSH Account\e[0m                \e[32;1m##\e[0m"
