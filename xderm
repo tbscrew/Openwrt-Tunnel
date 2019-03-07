@@ -756,7 +756,7 @@ echo -e " \e[32;1m##\e[0m               \e[35;1mXDERM SSH Auto Stopper\e[0m     
 echo -e " \e[32;1m#######################################################\e[0m"
 dns1=$(cat /tmp/resolv.conf.auto|grep name|awk "NR==1"|awk -F " " '{print $2}')
 dns2=$(cat /tmp/resolv.conf.auto|grep name|awk "NR==2"|awk -F " " '{print $2}')
-killall -q redsocks dnsmasq sshpass bot.sh
+killall -q redsocks dnsmasq sshpass bot.sh;/etc/init.d/dnsmasq restart > /dev/null
 outp=$(iptables -w -t nat -L OUTPUT --line-number -n|grep REDSOCKS|awk -F " " '{print $1}')
 [[ -z $outp ]] || { iptables -w -t nat -F OUTPUT; }
  while true; do
@@ -774,6 +774,7 @@ time=$(date|awk -F ' ' '{print $4}');read -t 10 -n 1 -s -p "($time) " y;echo -en
 time=$(date|awk -F ' ' '{print $4}');echo -e " \e[36;1m($time)\e[0m \e[31;1mIngin Reconnect Modem juga? [y/N]\e[0m"
 time=$(date|awk -F ' ' '{print $4}');read -t 10 -n 1 -s -p "($time) " ym;echo -en "\b\b\b\b\b\b\b\b\b\b\b"
 [[ $ym == "y" ]] && { killall -q pppd;time=$(date|awk -F ' ' '{print $4}');echo -e " \e[36;1m($time)\e[0m \e[31;1mReconnect Modem Berhasil!\e[0m\n"; } || { time=$(date|awk -F ' ' '{print $4}');echo -e " \e[36;1m($time)\e[0m \e[31;1mReconnect Modem Dibatalkan!\e[0m\n"; }
+
 exit
 }
  check () {
