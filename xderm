@@ -46,7 +46,7 @@ read -p " Are you sure you want to continue? <y/N> " prompt
 if [[ $prompt == "y" || $prompt == "Y" || $prompt == "yes" || $prompt == "Yes" ]]; then
 #echo -e " \e[36;1mProses sedang berlangsung... 10%\e[0m"
 echo -e " \e[36;1mProses sedang berlangsung...\e[0m"
-opkg update && opkg install screen python-pip redsocks coreutils-timeout openssl-util curl ncat openssh-client
+opkg update && opkg install python-pip screen redsocks coreutils-timeout openssl-util curl ncat openssh-client
 #sleep 1
 #echo -e " \e[36;1mProses sedang berlangsung... 35%\e[0m"
 #sleep 1
@@ -74,6 +74,10 @@ wget --no-check-certificate -N https://github.com/tbscrew/Openwrt-Tunnel/raw/mas
 else
 echo -e " \e[36;1mSSHPASS Version tidak terdeteksi. Silahkan contact ADMIN!\e[0m"
 fi
+cek=$(cat /etc/openwrt_r*)
+if [[ $cek == *"Chaos Calmer"* ]]; then
+opkg update && opkg install kmod-ipv6 ip6tables radvd ip 6to4
+fi
 echo -e " \e[36;1mProcess COMPLETE 100%\e[0m"
 sleep 2
 echo -e " \e[36;1mRouter Rebooting...\e[0m"
@@ -97,7 +101,16 @@ echo -e " \e[32;1m#######################################################\e[0m"
 echo -e " \e[32;1m##\e[0m               \e[35;1mXDERM SSH Auto Launcher             \e[0m\e[32;1m##\e[0m"
 echo -e " \e[32;1m#######################################################\e[0m"
  while true; do
+ips=$(ifconfig  | grep 'inet addr:'| grep -v '127.0.0.1' | grep -v '192.168.1.1' | cut -d: -f2 | awk '{ print $1}' | head -c 9)
+ if [[ "$ips" == "192.168.8" ]]; then
+data=$(curl -s http://192.168.8.1/api/webserver/SesTokInfo)
+sesi=$(echo "$data" | grep "SessionID=" | cut -b 10-147)
+token=$(echo "$data" | grep "TokInfo" | cut -b 10-41)
+ip=$(curl -s http://192.168.8.1/api/monitoring/status -H "Host: 192.168.8.1" -H "Connection: keep-alive" -H "Accept: */*" -H "X-Requested-With: XMLHttpRequest" -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.119 Safari/537.36" -H "Referer: http://192.168.8.1/html/home.html" -H "Accept-Encoding: gzib, deflate" -H "Accept-Language: id-ID,id;q=0.9,en-US;q=0.8,en;q=0.7" -H "Cookie: $sesi" | grep 'WanIPAddress' | awk -F">" '{print $2}' | awk -F"<" '{print $1}')
+elif [[ ! "$ips" == "192.168.8" ]]; then
 ip=$(ifconfig  | grep 'inet addr:'| grep -v '127.0.0.1' | grep -v '192.168.1.1' | cut -d: -f2 | awk '{ print $1}')
+fi
+
 time=$(date|awk -F ' ' '{print $4}')
 [[ ! -z $ip ]] || { echo -n -e " \e[36;1m($time)\e[0m \e[32;1mMenunggu Koneksi...\e[0m\e[33;1m($n)\e[0m";g=1; }
  if [ ! -f $ip ]; then
@@ -536,25 +549,25 @@ n=1
 screen -d -m -L ./$socks
 sleep 1
    while true; do
-tcp=$(netstat -ln|grep tcp|grep :3339|grep LISTEN|awk -F " " '{print $1}'|awk "NR==1")
+tcp=$(netstat -tnlpu|grep tcp|grep :3339|grep LISTEN|awk -F " " '{print $1}'|awk "NR==1")
 time=$(date|awk -F ' ' '{print $4}')
-echo -e -n " \e[36;1m($time)\e[0m \e[32;1mMenjalankan Inject...\e[0m\e[33;1m($n)\e[0m"
+echo -e -n " \e[36;1m($time)\e[0m \e[32;1mMenjalankan Inject... \e[0m\e[33;1m($n)\e[0m"
 pus=$(echo $n|wc -c)
  if [ $pus -eq 2 ]; then
-echo -en "\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b"
+echo -en "\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b"
  fi
   if [ $pus -eq 3 ]; then
-echo -en "\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b"
+echo -en "\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b"
   fi
     if [ ! -f $tcp ]; then
    if [ $tcp == "tcp" ]; then
 time=$(date|awk -F ' ' '{print $4}')
-echo -e " \e[36;1m($time)\e[0m \e[32;1mMenjalankan Inject...\e[0m\e[34;1m(OK)\e[0m"
+echo -e " \e[36;1m($time)\e[0m \e[32;1mMenjalankan Inject... \e[0m\e[34;1m(OK)\e[0m"
 sleep 2
 break
    fi
     fi
-[[ $n -gt 30 ]] && { echo -e " \e[36;1m($time)\e[0m \e[32;1mInject gagal Berjalan... \e[0m";exit; }
+[[ $n -gt 30 ]] && { echo -e " \e[36;1m($time)\e[0m \e[31;1mInject gagal Berjalan...! \e[0m";exit; }
 let n=$n+1;sleep 1
    done
 else
@@ -566,7 +579,7 @@ j=$(echo $pass|wc -c)
 [[ $j != 2 ]] && { pss=$(echo $pass|head -c1);pss=$(echo "$pss*******"); } || { pss="*"; }
 cd /root
 ######################### end inject and replace config #######################
-time=$(date|awk -F ' ' '{print $4}');echo -e " \e[36;1m($time)\e[0m \e[32;1mMethod: '$pf' \e[0m";cd $cdir
+time=$(date|awk -F ' ' '{print $4}');echo -e " \e[36;1m($time)\e[0m \e[32;1mMethod:\e[0m \e[34;1m'$pf'\e[0m \e[0m";cd $cdir
 #account
 time=$(date|awk -F ' ' '{print $4}');echo -e " \e[36;1m($time)\e[0m \e[32;1mMemuat Akun SSH...\e[0m"
 echo -e " \e[36;1m($time)\e[0m \e[35;1m############################################\e[0m"
@@ -605,7 +618,7 @@ time=$(date|awk -F ' ' '{print $4}');echo -e " \e[36;1m($time)\e[0m \e[32;1mMenj
   if [ "$log" == "Failed" ] && [ $n -gt 14 ]; then
 time=$(date|awk -F ' ' '{print $4}');echo -e " \e[36;1m($time)\e[0m \e[32;1mMenjalankan SSH...\e[0m \e[31;1m(Failed)\e[0m"
 echo -e " \e[36;1m($time)\e[0m \e[32;1mIngin Mengulang Koneksi ? [y/N] \e[0m"
-time=$(date|awk -F ' ' '{print $4}');read -t 8 -n 1 -s -p " ($time) " n;echo -en "\b\b\b\b\b\b\b\b\b\b\b";
+time=$(date|awk -F ' ' '{print $4}');read -t 8 -n 1 -s -p " ($time) " n;echo -en "\b\b\b\b\b\b\b\b\b\b\b\b";
  [[ ! -z $n ]] || { n=y; }
 if [ "$n" == "y" ]; then
 rm -f screenlog.0;killall -q redsocks sshpass dnsmasq;n=0;ulang=1
@@ -632,9 +645,9 @@ fi
 sleep 1;let n=$n+1
  done
 rm -rf /tmp/sshlog.txt;time=$(date|awk -F ' ' '{print $4}');echo -e " \e[36;1m($time)\e[0m \e[32;1mMenjalankan Redsocks & DNS...\e[0m"
-killall -q dnsmasq;sed -i "s/port=53/port=54/g" /var/etc/dnsmasq.conf*
+killall -q dnsmasq;sed -i "s/port=53/port=54/g" /var/etc/dnsmasq.conf
 killall -q dnsmasq;mv -fn /etc/init.d/dnsmasq /etc/init.d/dnsmasq1
-killall -q dnsmasq;dnsmasq -C /var/etc/dnsmasq.conf* -x /var/run/dnsmasq/dnsmasq.pid
+killall -q dnsmasq;dnsmasq -C /var/etc/dnsmasq.conf -x /var/run/dnsmasq/dnsmasq.pid
 mv -fn /etc/init.d/dnsmasq1 /etc/init.d/dnsmasq
 ###########################################################################################
 killall -q redsocks;echo "base { log_debug = off;log_info = on;log = \"syslog:local7\";
@@ -679,8 +692,12 @@ clear;n=1;h=0
 cdir=/usr/bin
 user=\$(cat \$cdir/assh/akun.txt|awk \"NR==1\");pass=\$(cat \$cdir/assh/akun.txt|awk \"NR==2\")
 host=\$(cat \$cdir/assh/akun.txt|awk \"NR==4\");port=\$(cat \$cdir/assh/akun.txt|awk \"NR==3\");sleep 1
-resp=\$(curl -m 13 -s --write-out %{http_code} --output /dev/null --socks5 192.168.1.1:8888 http://ping.eu)
+iface=\$(route|grep default | awk '{print \$8}')
+data1=\$(ifconfig \$iface|grep \"bytes\"|awk -F \".\" '{print \$2}'|awk -F \" \" '{print \$1}')
+resp=\$(curl -m 5 -s --write-out %{http_code} --output /dev/null --socks5-hostname 192.168.1.1:8888 http://ping.eu)
  if [ \$resp != \"301\" ]; then
+data2=\$(ifconfig \$iface|grep \"bytes\"|awk -F \".\" '{print \$2}'|awk -F \" \" '{print \$1}')
+if [ \$data1 == \$data2 ]; then
 outp=\$(iptables -w -t nat -L OUTPUT --line-number -n|grep REDSOCKS|awk -F \" \" '{print \$1}')
 [[ -z \$outp ]] || { iptables -w -t nat -F OUTPUT; }
  while true; do
@@ -689,14 +706,9 @@ lines=\$(iptables -w -t nat -L PREROUTING --line-number -n|grep tcp|awk \"NR==1\
  done
 reds=\$(iptables -w -t nat -L -n|grep REDSOCKS|awk -F \" \" '{print \$1}')
 [[ -z \$reds ]] || { iptables -w -t nat -F REDSOCKS;iptables -w -t nat -X REDSOCKS; }
-killall -q sshpass;echo -n -e \"ssh disconnect! [\$n]\";let h=\$h+1
-modes=$(cat /usr/bin/assh/profile.txt|awk "NR==1"|awk -F "'" '{print $2}')
-if [ $modes -eq 2 ]; then
-screen -d -m sshpass -p $pass ssh -oStrictHostKeyChecking=no -CND :8888 -p 443 $user@$host -o "Proxycommand=ncat --proxy-type http --proxy 127.0.0.1:3339 %h %p"
-else
-screen -d -m sshpass -p $pass ssh -oStrictHostKeyChecking=no -CND :8888 -p $port $user@$host -o "Proxycommand=ncat --proxy-type http --proxy 127.0.0.1:3339 %h %p"
-fi
-sleep 8
+killall -q sshpass redsocks;echo -n -e \"\e[31;1mSSH DISSCONNECT!\e[0m [\$n]\";let h=\$h+1
+screen -d -m sshpass -p \$pass ssh -oStrictHostKeyChecking=no -CND :8888 -p \$port \$user@\$host -o \"Proxycommand=ncat --proxy-type http --proxy 127.0.0.1:3339 %h %p\"
+sleep 5
 iptables -t nat -N REDSOCKS
 iptables -t nat -A REDSOCKS -d 0.0.0.0/8 -j ACCEPT
 iptables -t nat -A REDSOCKS -d 10.0.0.0/8 -j ACCEPT
@@ -708,11 +720,16 @@ iptables -t nat -A REDSOCKS -p tcp -j REDIRECT --to-ports 8889
 iptables -t nat -A OUTPUT -p tcp -j REDSOCKS
 iptables -t nat -A PREROUTING -p tcp -d 192.168.0.0/16 -j ACCEPT
 iptables -t nat -A PREROUTING -p tcp -j REDIRECT --to-ports 8889
-else echo -n -e \"ssh connected.! [\$n]\";h=1
+fi
+else echo -n -e \"\e[32;1mSSH CONNECTED..!\e[0m [\$n]\";h=1
  fi
 r=\$(ps -w|grep redsocks -o -c)
-[[ \$r != 2 ]] && { redsocks; }
-sleep 4;let n=\$n+1;echo -en \"\\b\\b\\b\\b\\b\\b\\b\\b\\b\\b\\b\\b\\b\\b\\b\\b\\b\\b\\b\\b\\b\\b\\b\\b\\b\\b\\b\\b\\b\\b\\b\\b\\b\\b\"
+if [[ ! \$r == "2" ]]; then
+killall -q redsocks
+redsocks
+fi
+sleep 3
+let n=\$n+1;echo -en \"\\b\\b\\b\\b\\b\\b\\b\\b\\b\\b\\b\\b\\b\\b\\b\\b\\b\\b\\b\\b\\b\\b\\b\\b\\b\\b\\b\\b\\b\\b\\b\\b\\b\\b\"
  done" > /tmp/bot.sh
 ######################################################################################################################
 chmod +x /tmp/bot.sh;cd /tmp;screen -d -m ./bot.sh
@@ -735,11 +752,11 @@ echo -e " \e[36;1m($time)\e[0m\e[0m\e[32;1m Kosongkan dan ENTER untuk kembali\e[
 read -p " ($time) " proxyip
  if [ -z "$proxyip" ]; then
 clear
-echo
-echo -e " \e[31;3m=============== IPTABLES GAGAL DISIMPAN! ===============\e[0m"
+echo -e " \e[32;1m#######################################################\e[0m"
+echo -e " \e[32;1m##\e[0m              \e[31;3mIPTABLES GAGAL DISIMPAN!\e[0m             \e[32;1m##\e[0m"
+echo -e " \e[32;1m#######################################################\e[0m"
 echo
  else
-clear
 lines=$(iptables -w -t nat -L PREROUTING -n --line-number|grep REDIRECT|awk -F " " '{print $1}')
 [[ -z $lines ]] || { iptables -w -t nat -D PREROUTING $lines; }
 iptables -w -t nat -A PREROUTING -d $proxyip -p tcp -j ACCEPT
@@ -756,7 +773,7 @@ echo -e " \e[32;1m##\e[0m               \e[35;1mXDERM SSH Auto Stopper\e[0m     
 echo -e " \e[32;1m#######################################################\e[0m"
 dns1=$(cat /tmp/resolv.conf.auto|grep name|awk "NR==1"|awk -F " " '{print $2}')
 dns2=$(cat /tmp/resolv.conf.auto|grep name|awk "NR==2"|awk -F " " '{print $2}')
-killall -q redsocks dnsmasq sshpass bot.sh;/etc/init.d/dnsmasq restart > /dev/null
+killall -q redsocks dnsmasq sshpass bot.sh
 outp=$(iptables -w -t nat -L OUTPUT --line-number -n|grep REDSOCKS|awk -F " " '{print $1}')
 [[ -z $outp ]] || { iptables -w -t nat -F OUTPUT; }
  while true; do
@@ -765,15 +782,116 @@ lines=$(iptables -w -t nat -L PREROUTING --line-number -n|grep tcp|awk "NR==1"|a
  done
 reds=$(iptables -w -t nat -L -n|grep REDSOCKS|awk -F " " '{print $1}')
 [[ -z $reds ]] || { iptables -w -t nat -F REDSOCKS;iptables -w -t nat -X REDSOCKS; }
-in=$(ps -w|grep socks -o -c)
- if [ $in -eq 3 ]; then
-time=$(date|awk -F ' ' '{print $4}');echo -e " \e[36;1m($time)\e[0m \e[31;1mIngin Hentikan Proses Inject? [y/N]\e[0m"
-time=$(date|awk -F ' ' '{print $4}');read -t 10 -n 1 -s -p "($time) " y;echo -en "\b\b\b\b\b\b\b\b\b\b\b"
-[[ $y == "y" ]] && { killall -q socks1 socks2;time=$(date|awk -F ' ' '{print $4}');echo -e " \e[36;1m($time)\e[0m \e[31;1mInject dihentikan!\e[0m"; } || { time=$(date|awk -F ' ' '{print $4}');echo -e " \e[36;1m($time)\e[0m \e[31;1mInject Tetap Berjalan!\e[0m"; }
+
+
+
+ips=$(ifconfig  | grep 'inet addr:'| grep -v '127.0.0.1' | grep -v '192.168.1.1' | cut -d: -f2 | awk '{ print $1}' | head -c 9)
+ if [[ "$ips" == "192.168.8" ]]; then
+data=$(curl -s http://192.168.8.1/api/webserver/SesTokInfo)
+sesi=$(echo "$data" | grep "SessionID=" | cut -b 10-147)
+token=$(echo "$data" | grep "TokInfo" | cut -b 10-41)
+ipp=$(curl -s http://192.168.8.1/api/monitoring/status -H "Host: 192.168.8.1" -H "Connection: keep-alive" -H "Accept: */*" -H "X-Requested-With: XMLHttpRequest" -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.119 Safari/537.36" -H "Referer: http://192.168.8.1/html/home.html" -H "Accept-Encoding: gzib, deflate" -H "Accept-Language: id-ID,id;q=0.9,en-US;q=0.8,en;q=0.7" -H "Cookie: $sesi" | grep 'WanIPAddress' | awk -F">" '{print $2}' | awk -F"<" '{print $1}')
+time=$(date|awk -F ' ' '{print $4}');echo -e " \e[36;1m($time)\e[0m \e[32;1mIP Address saat ini \e[0m\e[33;1m$ipp\e[0m"
+elif [[ ! "$ips" == "192.168.8" ]]; then
+ipa=$(ifconfig  | grep 'inet addr:'| grep -v '127.0.0.1' | grep -v '192.168.1.1' | cut -d: -f2 | awk '{ print $1}')
+time=$(date|awk -F ' ' '{print $4}');echo -e " \e[36;1m($time)\e[0m \e[32;1mIP Address saat ini \e[0m\e[33;1m$ipa\e[0m"
+fi
+
+
+in=$(ps | grep socks)
+ if [[ $in = *"socks1"* ]] || [[ $in = *"socks2"* ]]; then
+time=$(date|awk -F ' ' '{print $4}');echo -e " \e[36;1m($time)\e[0m \e[32;1mIngin Hentikan Proses Inject? [y/N]\e[0m"
+time=$(date|awk -F ' ' '{print $4}');read -t 10 -n 1 -s -p " ($time) " y;echo -en "\b\b\b\b\b\b\b\b\b\b\b\b"
+[[ $y == "y" ]] && { killall -q socks1 socks2;time=$(date|awk -F ' ' '{print $4}');echo -e " \e[36;1m($time)\e[0m \e[32;1mInject dihentikan!\e[0m"; } || { time=$(date|awk -F ' ' '{print $4}');echo -e " \e[36;1m($time)\e[0m \e[31;1mInject Tetap Berjalan!\e[0m"; }
  fi
-time=$(date|awk -F ' ' '{print $4}');echo -e " \e[36;1m($time)\e[0m \e[31;1mIngin Reconnect Modem juga? [y/N]\e[0m"
-time=$(date|awk -F ' ' '{print $4}');read -t 10 -n 1 -s -p "($time) " ym;echo -en "\b\b\b\b\b\b\b\b\b\b\b"
-[[ $ym == "y" ]] && { killall -q pppd;time=$(date|awk -F ' ' '{print $4}');echo -e " \e[36;1m($time)\e[0m \e[31;1mReconnect Modem Berhasil!\e[0m\n"; } || { time=$(date|awk -F ' ' '{print $4}');echo -e " \e[36;1m($time)\e[0m \e[31;1mReconnect Modem Dibatalkan!\e[0m\n"; }
+ 
+ 
+ 
+time=$(date|awk -F ' ' '{print $4}');echo -e " \e[36;1m($time)\e[0m \e[32;1mIngin Reconnect Modem juga? [y/N]\e[0m"
+time=$(date|awk -F ' ' '{print $4}');read -t 10 -n 1 -s -p " ($time) " ym;echo -en "\b\b\b\b\b\b\b\b\b\b\b\b"
+if [[ $ym == "y" ]]; then
+ip=$(ifconfig  | grep 'inet addr:'| grep -v '127.0.0.1' | grep -v '192.168.1.1' | cut -d: -f2 | awk '{ print $1}' | head -c 9)
+ if [[ "$ip" == "192.168.8" ]]; then
+spin() {
+    n=1;ulang=1
+    while true; do
+        time=$(date|awk -F ' ' '{print $4}');echo -n -e " \e[36;1m($time)\e[0m \e[32;1mReconnecting...\e[0m \e[33;1m($n)\e[0m"
+pus=$(echo $n|wc -c)
+ if [ $pus -eq 2 ]; then
+echo -en "\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b"
+ fi
+  if [ $pus -eq 3 ]; then
+echo -en "\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b"
+  fi
+        sleep 1;let n=$n+1
+    done
+}
+
+spin & pid=$!
+
+#your task here
+data=$(curl -s http://192.168.8.1/api/webserver/SesTokInfo)
+sesi=$(echo "$data" | grep "SessionID=" | cut -b 10-147)
+token=$(echo "$data" | grep "TokInfo" | cut -b 10-41)
+off=$(curl -s -X POST http://192.168.8.1/api/dialup/mobile-dataswitch -H "Host: 192.168.8.1" -H "Connection: keep-alive" -H "Content-Length: 83" -H "Accept: */*" -H "Origin: http://192.168.8.1" -H "X-Requested-With: XMLHttpRequest" -H "__RequestVerificationToken: $token" -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.119 Safari/537.36" -H "Content-Type: application/x-www-form-urlencoded; charset=UTF-8" -H "Referer: http://192.168.8.1/html/home.html" -H "Accept-Encoding: gzib, deflate" -H "Accept-Language: id-ID,id;q=0.9,en-US;q=0.8,en;q=0.7" -H "Cookie: $sesi" -d "<request><dataswitch>0</dataswitch></request>")
+data=$(curl -s http://192.168.8.1/api/webserver/SesTokInfo)
+sesi=$(echo "$data" | grep "SessionID=" | cut -b 10-147)
+token=$(echo "$data" | grep "TokInfo" | cut -b 10-41)
+on=$(curl -s -X POST http://192.168.8.1/api/dialup/mobile-dataswitch -H "Host: 192.168.8.1" -H "Connection: keep-alive" -H "Content-Length: 83" -H "Accept: */*" -H "Origin: http://192.168.8.1" -H "X-Requested-With: XMLHttpRequest" -H "__RequestVerificationToken: $token" -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.119 Safari/537.36" -H "Content-Type: application/x-www-form-urlencoded; charset=UTF-8" -H "Referer: http://192.168.8.1/html/home.html" -H "Accept-Encoding: gzib, deflate" -H "Accept-Language: id-ID,id;q=0.9,en-US;q=0.8,en;q=0.7" -H "Cookie: $sesi" -d "<request><dataswitch>1</dataswitch></request>")
+sleep 2
+ip=$(curl -s http://192.168.8.1/api/monitoring/status -H "Host: 192.168.8.1" -H "Connection: keep-alive" -H "Accept: */*" -H "X-Requested-With: XMLHttpRequest" -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.119 Safari/537.36" -H "Referer: http://192.168.8.1/html/home.html" -H "Accept-Encoding: gzib, deflate" -H "Accept-Language: id-ID,id;q=0.9,en-US;q=0.8,en;q=0.7" -H "Cookie: $sesi" | grep 'WanIPAddress' | awk -F">" '{print $2}' | awk -F"<" '{print $1}')
+
+ if [ $ip ]; then
+time=$(date|awk -F ' ' '{print $4}');echo -e " \e[36;1m($time)\e[0m \e[32;1mReconnecting...\e[0m \e[34;1m(OK)\e[0m"
+ fi
+time=$(date|awk -F ' ' '{print $4}');echo -e " \e[36;1m($time)\e[0m \e[32;1mRECONNECT SUCCESS! IP Terbaru \e[0m\e[33;1m$ip\e[0m\n"
+
+# kill the spinner task
+kill $pid > /dev/null 2>&1
+ip=$(ifconfig  | grep 'inet addr:'| grep -v '127.0.0.1' | grep -v '192.168.1.1' | cut -d: -f2 | awk '{ print $1}' | head -c 9)
+elif [[ ! "$ip" == "192.168.8" ]]; then
+spin() {
+    n=1;ulang=1
+    while true; do
+        time=$(date|awk -F ' ' '{print $4}');echo -n -e " \e[36;1m($time)\e[0m \e[32;1mReconnecting...\e[0m \e[33;1m($n)\e[0m"
+pus=$(echo $n|wc -c)
+ if [ $pus -eq 2 ]; then
+echo -en "\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b"
+ fi
+  if [ $pus -eq 3 ]; then
+echo -en "\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b"
+  fi
+        sleep 1;let n=$n+1
+    done
+}
+
+spin & pid=$!
+
+#your task here
+sed -i "1s,.*,config '3ginfo',g" /etc/config/3ginfo
+sed -i "2s,.*,        option 'device' '/dev/ttyUSB2',g" /etc/config/3ginfo
+sed -i "3s,.*,        option 'pincode' '',g" /etc/config/3ginfo
+sed -i "4s,.*,        option 'http_port' '81',g" /etc/config/3ginfo
+sed -i "5s,.*,        option 'language' 'en',g" /etc/config/3ginfo
+sed -i "6s,.*,        option 'network' '4g',g" /etc/config/3ginfo
+data1=$(curl -s http://192.168.1.1:81/cgi-bin/onoff.sh)
+data2=$(curl -s http://192.168.1.1:81/cgi-bin/onoff.sh)
+sleep 8
+ip=$(ifconfig  | grep 'inet addr:'| grep -v '127.0.0.1' | grep -v '192.168.1.1' | cut -d: -f2 | awk '{ print $1}')
+
+ if [ $ip ]; then
+time=$(date|awk -F ' ' '{print $4}');echo -e " \e[36;1m($time)\e[0m \e[32;1mReconnecting...\e[0m \e[34;1m(OK)\e[0m"
+ fi
+time=$(date|awk -F ' ' '{print $4}');echo -e " \e[36;1m($time)\e[0m \e[32;1mRECONNECT SUCCESS! IP Terbaru \e[0m\e[33;1m$ip\e[0m\n"
+
+# kill the spinner task
+kill $pid > /dev/null 2>&1
+fi
+fi
+if [[ ! $ym == "y" ]]; then
+time=$(date|awk -F ' ' '{print $4}');echo -e " \e[36;1m($time)\e[0m \e[31;1mReconnect Modem Dibatalkan!\e[0m\n"
+fi
+
 
 exit
 }
@@ -782,102 +900,110 @@ clear
 echo -e " \e[32;1m#######################################################\e[0m"
 echo -e " \e[32;1m##\e[0m                 \e[35;1mXDERM Host Checker\e[0m                \e[32;1m##\e[0m"
 echo -e " \e[32;1m#######################################################\e[0m"
-echo
-echo -e " \e[36;1mPilih Nomor:\e[0m"
+time=$(date|awk -F ' ' '{print $4}');echo -e " \e[36;1m($time)\e[0m \e[32;1mPilih Nomor:\e[0m"
 while true; do
-echo -e " \e[32;1m*******************************************************\e[0m"
-echo -e " \e[36;1m1. Host Checker Proxy mode\e[0m"
-echo -e " \e[36;1m2. Host Checker Direct mode\e[0m"
-echo -e " \e[36;1m3. Host Checker SSL/TLS Mode\e[0m"
-echo -e " \e[36;1m4. EXIT\e[0m"
-echo -e " \e[32;1m*******************************************************\e[0m"
-read -p " " no
+echo -e " \e[32;1m#######################################################\e[0m"
+time=$(date|awk -F ' ' '{print $4}');echo -e " \e[36;1m($time)\e[0m \e[33;1m1.\e[0m\e[32;1mHost Checker Proxy mode\e[0m"
+time=$(date|awk -F ' ' '{print $4}');echo -e " \e[36;1m($time)\e[0m \e[33;1m2.\e[0m\e[32;1mHost Checker Direct mode\e[0m"
+time=$(date|awk -F ' ' '{print $4}');echo -e " \e[36;1m($time)\e[0m \e[33;1m3.\e[0m\e[32;1mHost Checker SSL/TLS Mode\e[0m"
+time=$(date|awk -F ' ' '{print $4}');echo -e " \e[36;1m($time)\e[0m \e[33;1m4.\e[0m\e[32;1mEXIT\e[0m"
+echo -e " \e[32;1m#######################################################\e[0m"
+read -p " ($time) " no
  if [ -f $no ] || [ $no -gt "4" ] || [ $no == "0" ] || [[ $no != *[[:digit:]]* ]]; then
 clear
-echo
-echo -e " \e[31;3m============== PILIH NOMOR DENGAN BENAR! ==============\e[0m"
-echo
+echo -e " \e[32;1m#######################################################\e[0m"
+echo -e " \e[32;1m##\e[0m              \e[31;3mPILIH NOMOR DENGAN BENAR!\e[0m            \e[32;1m##\e[0m"
+echo -e " \e[32;1m#######################################################\e[0m"
+time=$(date|awk -F ' ' '{print $4}');echo -e " \e[36;1m($time)\e[0m \e[32;1mPilih Nomor:\e[0m"
 continue
  fi
 if [ $no == "1" ]; then
 clear
 proxy=$(cat /usr/bin/assh/profile.txt|awk "NR==4"|awk -F "'" '{print $2}')
-echo
-echo -e " \e[36;1m*Proxy yang digunakan: \e[0m\e[33;1m$proxy\e[0m"
-echo -e " \e[36;1m*Masukkan Method & BUG yang ingin ditest\e[0m"
-echo -e " \e[36;1m*Contoh:\e[0m \e[33;1mGET google.com\e[0m"
-echo -e " \e[36;1m*Kosongkan dan ENTER untuk kembali\e[0m"
-read -p " " test
+echo -e " \e[32;1m#######################################################\e[0m"
+echo -e " \e[32;1m##\e[0m                 \e[35;1mXDERM Host Checker\e[0m                \e[32;1m##\e[0m"
+echo -e " \e[32;1m#######################################################\e[0m"
+time=$(date|awk -F ' ' '{print $4}');echo -e " \e[36;1m($time)\e[0m \e[32;1mProxy Mode:\e[0m"
+echo -e " \e[32;1m#######################################################\e[0m"
+time=$(date|awk -F ' ' '{print $4}');echo -e " \e[36;1m($time)\e[0m \e[32;1mProxy yang digunakan: \e[0m\e[33;1m$proxy\e[0m"
+time=$(date|awk -F ' ' '{print $4}');echo -e " \e[36;1m($time)\e[0m \e[32;1mMasukkan Method & BUG yang ingin ditest\e[0m"
+time=$(date|awk -F ' ' '{print $4}');echo -e " \e[36;1m($time)\e[0m \e[32;1mContoh:\e[0m \e[33;1mGET google.com\e[0m"
+time=$(date|awk -F ' ' '{print $4}');echo -e " \e[36;1m($time)\e[0m \e[32;1mKosongkan dan ENTER untuk kembali\e[0m"
+echo -e " \e[32;1m#######################################################\e[0m"
+read -p " ($time) " test
  if [ -z "$test" ]; then
 clear
-echo
-echo -e " \e[31;3m###################### CANCELED! ######################\e[0m"
-echo
+echo -e " \e[32;1m#######################################################\e[0m"
+echo -e " \e[32;1m##\e[0m                     \e[31;3mCANCELED!\e[0m                     \e[32;1m##\e[0m"
+echo -e " \e[32;1m#######################################################\e[0m"
+time=$(date|awk -F ' ' '{print $4}');echo -e " \e[36;1m($time)\e[0m \e[32;1mPilih Nomor:\e[0m"
 continue
  else 
 method=$(echo "$test" | awk '{print $1}')
 bug=$(echo "$test" | awk '{print $2}')
 exe=$(curl -v -s -m 2 -X $method -o /dev/null -w "%{http_code} %{redirect_url}" --proxy http://$proxy http://$bug)
-continue
 fi
 fi
 if [ $no == "2" ]; then
 clear
-echo
-echo -e " \e[36;1m*Mode Direct\e[0m"
-echo -e " \e[36;1m*Masukkan Method & BUG yang ingin ditest\e[0m"
-echo -e " \e[36;1m*Contoh:\e[0m \e[33;1mGET google.com\e[0m"
-echo -e " \e[36;1m*Kosongkan dan ENTER untuk kembali\e[0m"
-read -p " " test
+echo -e " \e[32;1m#######################################################\e[0m"
+echo -e " \e[32;1m##\e[0m                 \e[35;1mXDERM Host Checker\e[0m                \e[32;1m##\e[0m"
+echo -e " \e[32;1m#######################################################\e[0m"
+time=$(date|awk -F ' ' '{print $4}');echo -e " \e[36;1m($time)\e[0m \e[32;1mDirect Mode:\e[0m"
+echo -e " \e[32;1m#######################################################\e[0m"
+time=$(date|awk -F ' ' '{print $4}');echo -e " \e[36;1m($time)\e[0m \e[32;1mMasukkan Method & BUG yang ingin ditest\e[0m"
+time=$(date|awk -F ' ' '{print $4}');echo -e " \e[36;1m($time)\e[0m \e[32;1mContoh:\e[0m \e[33;1mGET google.com\e[0m"
+time=$(date|awk -F ' ' '{print $4}');echo -e " \e[36;1m($time)\e[0m \e[32;1mKosongkan dan ENTER untuk kembali\e[0m"
+echo -e " \e[32;1m#######################################################\e[0m"
+read -p " ($time) " test
  if [ -z "$test" ]; then
 clear
-echo
-echo -e " \e[31;3m###################### CANCELED! ######################\e[0m"
-echo
+echo -e " \e[32;1m#######################################################\e[0m"
+echo -e " \e[32;1m##\e[0m                     \e[31;3mCANCELED!\e[0m                     \e[32;1m##\e[0m"
+echo -e " \e[32;1m#######################################################\e[0m"
+time=$(date|awk -F ' ' '{print $4}');echo -e " \e[36;1m($time)\e[0m \e[32;1mPilih Nomor:\e[0m"
 continue
  else 
-clear
 method=$(echo "$test" | awk '{print $1}')
 bug=$(echo "$test" | awk '{print $2}')
 exe=$(curl -v -s -m 2 -X $method -o /dev/null -w "%{http_code} %{redirect_url}" http://$bug)
-continue
 fi
 fi
 if [ $no == "3" ]; then
 clear
 hss=$(cat /usr/bin/assh/akun.txt|awk "NR==4")
-echo
-echo -e " \e[36;1m*Mode Direct SSL/TLS\e[0m"
-echo -e " \e[36;1m*IP SSH utama \e[0m\e[33;1m$hss:443\e[0m"
-echo -e " \e[36;1m*Pastikan SSH support SSL/TLS\e[0m"
-echo -e " \e[36;1m*Masukkan Host SNI yang ingin ditest:\e[0m"
-echo -e " \e[36;1m(Contoh:\e[0m\e[33;1mgooglevideo.com\e[0m\e[36;1m)\e[0m"
-echo -e " \e[36;1m*Kosongkan dan ENTER untuk kembali\e[0m"
-read -p " " test
+echo -e " \e[32;1m#######################################################\e[0m"
+echo -e " \e[32;1m##\e[0m                 \e[35;1mXDERM Host Checker\e[0m                \e[32;1m##\e[0m"
+echo -e " \e[32;1m#######################################################\e[0m"
+time=$(date|awk -F ' ' '{print $4}');echo -e " \e[36;1m($time)\e[0m \e[32;1mSSL/TLS Mode:\e[0m"
+echo -e " \e[32;1m#######################################################\e[0m"
+time=$(date|awk -F ' ' '{print $4}');echo -e " \e[36;1m($time)\e[0m \e[32;1mIP SSH utama \e[0m\e[33;1m$hss:443\e[0m"
+time=$(date|awk -F ' ' '{print $4}');echo -e " \e[36;1m($time)\e[0m \e[32;1mPastikan SSH support SSL/TLS\e[0m"
+time=$(date|awk -F ' ' '{print $4}');echo -e " \e[36;1m($time)\e[0m \e[32;1mMasukkan Host SNI yang ingin ditest:\e[0m"
+time=$(date|awk -F ' ' '{print $4}');echo -e " \e[36;1m($time)\e[0m \e[32;1mContoh:\e[0m\e[33;1mgooglevideo.com\e[0m"
+time=$(date|awk -F ' ' '{print $4}');echo -e " \e[36;1m($time)\e[0m \e[32;1mKosongkan dan ENTER untuk kembali\e[0m"
+echo -e " \e[32;1m#######################################################\e[0m"
+read -p " ($time) " test
  if [ -z "$test" ]; then
 clear
-echo
-echo -e " \e[31;3m###################### CANCELED! ######################\e[0m"
-echo
+echo -e " \e[32;1m#######################################################\e[0m"
+echo -e " \e[32;1m##\e[0m                     \e[31;3mCANCELED!\e[0m                     \e[32;1m##\e[0m"
+echo -e " \e[32;1m#######################################################\e[0m"
+time=$(date|awk -F ' ' '{print $4}');echo -e " \e[36;1m($time)\e[0m \e[32;1mPilih Nomor:\e[0m"
 continue
  else 
-clear
 hss=$(cat /usr/bin/assh/akun.txt|awk "NR==4")
 exe=$(timeout 3 openssl s_client -connect $hss:443 -servername $test)
 if [[ $exe == *"dropbear"* ]]; then
-   hasilkode=" 100% WORKING SSL/TLS MODE"
+   hasilkode="100% WORKING SSL/TLS MODE"
+time=$(date|awk -F ' ' '{print $4}');echo -e " \e[36;1m($time)\e[0m \e[33;1m$hasilkode: $test\e[0m"
 elif [[ $exe == *"TLS session ticket"* ]]; then
-   hasilkode=" 50% WORKING SSL/TLS MODE"
+   hasilkode="50% WORKING SSL/TLS MODE"
+time=$(date|awk -F ' ' '{print $4}');echo -e " \e[36;1m($time)\e[0m \e[33;1m$hasilkode: $test\e[0m"
 else
-   hasilkode=" Connection Timeout" 
+   hasilkode="Connection Timeout" 
+time=$(date|awk -F ' ' '{print $4}');echo -e " \e[36;1m($time)\e[0m \e[31;1m$hasilkode: $test\e[0m"
 fi
-if [[ $hasilkode == " Connection Timeout" ]]
-then
-echo -e "\n\e[31;1m$hasilkode: $test\e[0m"
-else
-echo -e "\n\e[33;1m$hasilkode: $test\e[0m"
-fi
-continue
 fi
 fi
 if [ $no == "4" ]; then
@@ -887,7 +1013,7 @@ fi
 exit
 done
 }
- swsi () {
+ finder () {
 clear
 echo -e " \e[32;1m#######################################################\e[0m"
 echo -e " \e[32;1m##\e[0m               \e[35;1mPencarian IP Address\e[0m                \e[32;1m##\e[0m"
@@ -904,209 +1030,207 @@ clear
 echo -e " \e[32;1m#######################################################\e[0m"
 echo -e " \e[32;1m##\e[0m       \e[35;1mPerbarui Mode Inject - Payload & BUG\e[0m        \e[32;1m##\e[0m"
 echo -e " \e[32;1m#######################################################\e[0m"
-echo
-echo -e " \e[36;1mPilih Nomor:\e[0m"
+time=$(date|awk -F ' ' '{print $4}');echo -e " \e[36;1m($time)\e[0m \e[32;1mPilih Nomor:\e[0m"
 while true; do
-echo -e " \e[32;1m*******************************************************\e[0m"
-echo -e " \e[36;1m1. Ubah ke mode PROXY\e[0m"
-echo -e " \e[36;1m2. Ubah ke mode SSL\e[0m"
-echo -e " \e[36;1m3. Ganti Payload\e[0m"
-echo -e " \e[36;1m4. Ganti BUG SNI\e[0m"
-echo -e " \e[36;1m5. Ganti proxy\e[0m"
-echo -e " \e[36;1m6. EXIT\e[0m"
-echo -e " \e[32;1m*******************************************************\e[0m"
-read -p " " no
+echo -e " \e[32;1m#######################################################\e[0m"
+time=$(date|awk -F ' ' '{print $4}');echo -e " \e[36;1m($time)\e[0m \e[33;1m1.\e[0m\e[32;1mUbah ke mode PROXY\e[0m"
+time=$(date|awk -F ' ' '{print $4}');echo -e " \e[36;1m($time)\e[0m \e[33;1m2.\e[0m\e[32;1mUbah ke mode SSL\e[0m"
+time=$(date|awk -F ' ' '{print $4}');echo -e " \e[36;1m($time)\e[0m \e[33;1m3.\e[0m\e[32;1mGanti Payload\e[0m"
+time=$(date|awk -F ' ' '{print $4}');echo -e " \e[36;1m($time)\e[0m \e[33;1m4.\e[0m\e[32;1mGanti BUG SNI\e[0m"
+time=$(date|awk -F ' ' '{print $4}');echo -e " \e[36;1m($time)\e[0m \e[33;1m5.\e[0m\e[32;1mGanti proxy\e[0m"
+time=$(date|awk -F ' ' '{print $4}');echo -e " \e[36;1m($time)\e[0m \e[33;1m6.\e[0m\e[32;1mEXIT\e[0m"
+echo -e " \e[32;1m#######################################################\e[0m"
+read -p " ($time) " no
  if [ -f $no ] || [ $no -gt "6" ] || [ $no == "0" ] || [[ $no != *[[:digit:]]* ]]; then
 clear
-echo
-echo -e " \e[31;3m============== PILIH NOMOR DENGAN BENAR! ==============\e[0m"
-echo
+echo -e " \e[32;1m#######################################################\e[0m"
+echo -e " \e[32;1m##\e[0m              \e[31;3mPILIH NOMOR DENGAN BENAR!\e[0m            \e[32;1m##\e[0m"
+echo -e " \e[32;1m#######################################################\e[0m"
+time=$(date|awk -F ' ' '{print $4}');echo -e " \e[36;1m($time)\e[0m \e[32;1mPilih Nomor:\e[0m"
 continue
  fi
 if [ $no == "1" ]; then
 clear
-echo
+echo -e " \e[32;1m#######################################################\e[0m"
 sed -i "1s,.*,mode '1',g" /usr/bin/assh/profile.txt
-echo -e " \e[32;3m##########\e[0m  \e[33;1mSUKSES MENGGANTI KE MODE PROXY\e[0m  \e[32;3m###########\e[0m"
-echo
+echo -e " \e[32;3m##\e[0m          \e[33;1mSUKSES MENGGANTI KE MODE PROXY\e[0m           \e[32;3m##\e[0m"
+echo -e " \e[32;1m#######################################################\e[0m"
+time=$(date|awk -F ' ' '{print $4}');echo -e " \e[36;1m($time)\e[0m \e[32;1mPilih Nomor:\e[0m"
 continue
 fi
 if [ $no == "2" ]; then
 clear
-echo
+echo -e " \e[32;1m#######################################################\e[0m"
 sed -i "1s,.*,mode '2',g" /usr/bin/assh/profile.txt
-echo -e " \e[32;3m###########\e[0m  \e[33;1mSUKSES MENGGANTI KE MODE SSL\e[0m  \e[32;3m############\e[0m"
-echo
+echo -e " \e[32;3m##\e[0m           \e[33;1mSUKSES MENGGANTI KE MODE SSL\e[0m            \e[32;3m##\e[0m"
+echo -e " \e[32;1m#######################################################\e[0m"
+time=$(date|awk -F ' ' '{print $4}');echo -e " \e[36;1m($time)\e[0m \e[32;1mPilih Nomor:\e[0m"
 continue
 fi
 if [ $no == "3" ]; then
 payload=$(cat /usr/bin/assh/profile.txt|awk "NR==2"|awk -F "'" '{print $2}')
 clear
-echo
-echo -e " \e[36;1mPayload Sekarang:\e[0m \e[33;1m$payload\e[0m"
-echo -e " \e[36;1mMasukkan Payload: (Kosongkan dan ENTER untuk kembali)\e[0m"
-read -p " " payload
+echo -e " \e[32;1m#######################################################\e[0m"
+echo -e " \e[32;1m##\e[0m       \e[35;1mPerbarui Mode Inject - Payload & BUG\e[0m        \e[32;1m##\e[0m"
+echo -e " \e[32;1m#######################################################\e[0m"
+time=$(date|awk -F ' ' '{print $4}');echo -e " \e[36;1m($time)\e[0m \e[32;1mGanti Payload:\e[0m"
+echo -e " \e[32;1m#######################################################\e[0m"
+time=$(date|awk -F ' ' '{print $4}');echo -e " \e[36;1m($time)\e[0m \e[32;1mPayload Sekarang:\e[0m \e[33;1m$payload\e[0m"
+time=$(date|awk -F ' ' '{print $4}');echo -e " \e[36;1m($time)\e[0m \e[32;1mMasukkan Payload Baru:\e[0m"
+time=$(date|awk -F ' ' '{print $4}');echo -e " \e[36;1m($time)\e[0m \e[32;1mKosongkan dan ENTER untuk kembali\e[0m"
+echo -e " \e[32;1m#######################################################\e[0m"
+read -p " ($time) " payload
  if [ -z "$payload" ]; then
 clear
-echo
-echo -e " \e[31;3m=============== PAYLOAD GAGAL DISIMPAN! ===============\e[0m"
-echo
+echo -e " \e[32;1m#######################################################\e[0m"
+echo -e " \e[32;3m##\e[0m              \e[31;3mPAYLOAD GAGAL DISIMPAN!\e[0m              \e[32;3m##\e[0m"
+echo -e " \e[32;1m#######################################################\e[0m"
+time=$(date|awk -F ' ' '{print $4}');echo -e " \e[36;1m($time)\e[0m \e[32;1mPilih Nomor:\e[0m"
 continue
  else
 clear
  sed -i "2s,.*,payload '$payload',g" /usr/bin/assh/profile.txt
-echo
-echo -e " \e[32;3m#############\e[0m  \e[33;1mSUKSES MENGGANTI PAYLOAD\e[0m  \e[32;3m##############\e[0m"
-echo
+echo -e " \e[32;1m#######################################################\e[0m"
+echo -e " \e[32;3m##\e[0m             \e[33;1mSUKSES MENGGANTI PAYLOAD\e[0m              \e[32;3m##\e[0m"
+echo -e " \e[32;1m#######################################################\e[0m"
+time=$(date|awk -F ' ' '{print $4}');echo -e " \e[36;1m($time)\e[0m \e[32;1mPilih Nomor:\e[0m"
 continue
 fi
 fi
 if [ $no == "4" ]; then
 sni=$(cat /usr/bin/assh/profile.txt|awk "NR==3"|awk -F "'" '{print $2}')
 clear
-echo
-echo -e " \e[36;1mBUG SNI Sekarang:\e[0m \e[33;1m$sni\e[0m"
-echo -e " \e[36;1mMasukkan BUG SNI: (Kosongkan dan ENTER untuk kembali)\e[0m"
-read -p " " sni
+echo -e " \e[32;1m#######################################################\e[0m"
+echo -e " \e[32;1m##\e[0m       \e[35;1mPerbarui Mode Inject - Payload & BUG\e[0m        \e[32;1m##\e[0m"
+echo -e " \e[32;1m#######################################################\e[0m"
+time=$(date|awk -F ' ' '{print $4}');echo -e " \e[36;1m($time)\e[0m \e[32;1mGanti BUG SNI:\e[0m"
+echo -e " \e[32;1m#######################################################\e[0m"
+time=$(date|awk -F ' ' '{print $4}');echo -e " \e[36;1m($time)\e[0m \e[32;1mBUG SNI Sekarang:\e[0m \e[33;1m$sni\e[0m"
+time=$(date|awk -F ' ' '{print $4}');echo -e " \e[36;1m($time)\e[0m \e[32;1mMasukkan BUG SNI:\e[0m"
+time=$(date|awk -F ' ' '{print $4}');echo -e " \e[36;1m($time)\e[0m \e[32;1mKosongkan dan ENTER untuk kembali\e[0m"
+echo -e " \e[32;1m#######################################################\e[0m"
+read -p " ($time) " sni
  if [ -z "$sni" ]; then
 clear
-echo
-echo -e " \e[31;3m=============== BUG SNI GAGAL DISIMPAN! ===============\e[0m"
-echo
+echo -e " \e[32;1m#######################################################\e[0m"
+echo -e " \e[32;3m##\e[0m              \e[31;3mBUG SNI GAGAL DISIMPAN!\e[0m              \e[32;3m##\e[0m"
+echo -e " \e[32;1m#######################################################\e[0m"
+time=$(date|awk -F ' ' '{print $4}');echo -e " \e[36;1m($time)\e[0m \e[32;1mPilih Nomor:\e[0m"
 continue
  else
 clear
 sed -i "3s,.*,sni '$sni',g" /usr/bin/assh/profile.txt
-echo
-echo -e " \e[32;3m#############\e[0m  \e[33;1mSUKSES MENGGANTI BUG SNI\e[0m  \e[32;3m##############\e[0m"
-echo
+echo -e " \e[32;1m#######################################################\e[0m"
+echo -e " \e[32;3m##\e[0m             \e[33;1mSUKSES MENGGANTI BUG SNI\e[0m              \e[32;3m##\e[0m"
+echo -e " \e[32;1m#######################################################\e[0m"
+time=$(date|awk -F ' ' '{print $4}');echo -e " \e[36;1m($time)\e[0m \e[32;1mPilih Nomor:\e[0m"
 continue
 fi
 fi
 if [ $no == "5" ]; then
 clear
-echo
-echo -e " \e[36;1mPilih Proxy Server:\e[0m"
-echo -e " \e[32;1m*******************************************************\e[0m"
-echo -e " \e[36;1m1. XL=======: 202.152.240.50:8080\e[0m"
-echo -e " \e[36;1m2. AXIS=====: 10.8.3.8:8080\e[0m"
-echo -e " \e[36;1m3. TELKOMSEL: 10.1.89.130:8000\e[0m"
-echo -e " \e[36;1m4. THREE(3)=: 10.4.0.10:3128\e[0m"
-echo -e " \e[36;1m5. INDOSAT==: 10.19.19.19:8080\e[0m"
-echo -e " \e[36;1m6. Squid Proxy(manual) Contoh:10.169.69.69:8080\e[0m"
-echo -e " \e[36;1m7. EXIT\e[0m"
-echo -e " \e[32;1m*******************************************************\e[0m"
-read -p " " pxy
- if [ -f $pxy ] || [ $pxy -gt "7" ] || [ $pxy == "0" ] || [[ $pxy != *[[:digit:]]* ]]; then
+echo -e " \e[32;1m#######################################################\e[0m"
+echo -e " \e[32;1m##\e[0m       \e[35;1mPerbarui Mode Inject - Payload & BUG\e[0m        \e[32;1m##\e[0m"
+echo -e " \e[32;1m#######################################################\e[0m"
+time=$(date|awk -F ' ' '{print $4}');echo -e " \e[36;1m($time)\e[0m \e[32;1mGanti Proxy Server:\e[0m"
+echo -e " \e[32;1m#######################################################\e[0m"
+time=$(date|awk -F ' ' '{print $4}');echo -e " \e[36;1m($time)\e[0m \e[33;1m1.\e[0m\e[32;1mXL        : 202.152.240.50:8080\e[0m"
+time=$(date|awk -F ' ' '{print $4}');echo -e " \e[36;1m($time)\e[0m \e[33;1m2.\e[0m\e[32;1mAXIS      : 10.8.3.8:8080\e[0m"
+time=$(date|awk -F ' ' '{print $4}');echo -e " \e[36;1m($time)\e[0m \e[33;1m3.\e[0m\e[32;1mTELKOMSEL : 10.1.89.130:8000\e[0m"
+time=$(date|awk -F ' ' '{print $4}');echo -e " \e[36;1m($time)\e[0m \e[33;1m4.\e[0m\e[32;1mTHREE(3)  : 10.4.0.10:3128\e[0m"
+time=$(date|awk -F ' ' '{print $4}');echo -e " \e[36;1m($time)\e[0m \e[33;1m5.\e[0m\e[32;1mINDOSAT   : 10.19.19.19:8080\e[0m"
+time=$(date|awk -F ' ' '{print $4}');echo -e " \e[36;1m($time)\e[0m \e[33;1m6.\e[0m\e[32;1mProxy Manual (Contoh: 10.169.69.69:8080)\e[0m"
+time=$(date|awk -F ' ' '{print $4}');echo -e " \e[36;1m($time)\e[0m \e[33;1m\e[0m\e[32;1mKosongkan dan ENTER untuk kembali\e[0m"
+echo -e " \e[32;1m#######################################################\e[0m"
+read -p " ($time) " pxy
+ if [ -f $pxy ]; then
 clear
-echo
-echo -e " \e[31;3m============== PILIH NOMOR DENGAN BENAR! ==============\e[0m"
-echo
+echo -e " \e[32;1m#######################################################\e[0m"
+echo -e " \e[32;3m##\e[0m            \e[31;3mPROXY SERVER GAGAL DISIMPAN!\e[0m           \e[32;3m##\e[0m"
+echo -e " \e[32;1m#######################################################\e[0m"
+time=$(date|awk -F ' ' '{print $4}');echo -e " \e[36;1m($time)\e[0m \e[32;1mPilih Nomor:\e[0m"
+continue
+fi
+if [ $pxy -gt "6" ] || [ $pxy == "0" ] || [[ $pxy != *[[:digit:]]* ]]; then
+clear
+echo -e " \e[32;1m#######################################################\e[0m"
+echo -e " \e[32;1m##\e[0m              \e[31;3mPILIH NOMOR DENGAN BENAR!\e[0m            \e[32;1m##\e[0m"
+echo -e " \e[32;1m#######################################################\e[0m"
+time=$(date|awk -F ' ' '{print $4}');echo -e " \e[36;1m($time)\e[0m \e[32;1mPilih Nomor:\e[0m"
 continue
 fi
  if [ $pxy == "1" ]; then
-clear
 sed -i "4s,.*,ip '202.152.240.50:8080',g" /usr/bin/assh/profile.txt
 sed -i "5s,.*,proxy '202.152.240.50',g" /usr/bin/assh/profile.txt
 sed -i "6s,.*,port '8080',g" /usr/bin/assh/profile.txt
-echo
-echo -e " \e[36;1mSukses merubah Proxy ke\e[0m \e[33;1m202.152.240.50\e[0m"
-echo -e " \e[36;1mSukses merubah Port ke\e[0m \e[33;1m8080\e[0m"
-echo
-continue
- fi
- if [ $pxy == "2" ]; then
-clear
+time=$(date|awk -F ' ' '{print $4}');echo -e " \e[36;1m($time)\e[0m \e[32;1mSukses merubah Proxy ke\e[0m \e[33;1m202.152.240.50\e[0m"
+time=$(date|awk -F ' ' '{print $4}');echo -e " \e[36;1m($time)\e[0m \e[32;1mSukses merubah Port ke\e[0m \e[33;1m8080\e[0m"
+ elif [ $pxy == "2" ]; then
 sed -i "4s,.*,ip '10.8.3.8:8080',g" /usr/bin/assh/profile.txt
 sed -i "5s,.*,proxy '10.8.3.8',g" /usr/bin/assh/profile.txt
 sed -i "6s,.*,port '8080',g" /usr/bin/assh/profile.txt
-echo
-echo -e " \e[36;1mSukses merubah Proxy ke\e[0m \e[33;1m10.8.3.8\e[0m"
-echo -e " \e[36;1mSukses merubah Port ke\e[0m \e[33;1m8080\e[0m"
-echo
-continue
- fi
- if [ $pxy == "3" ]; then
-clear
+time=$(date|awk -F ' ' '{print $4}');echo -e " \e[36;1m($time)\e[0m \e[32;1mSukses merubah Proxy ke\e[0m \e[33;1m10.8.3.8\e[0m"
+time=$(date|awk -F ' ' '{print $4}');echo -e " \e[36;1m($time)\e[0m \e[32;1mSukses merubah Port ke\e[0m \e[33;1m8080\e[0m"
+ elif [ $pxy == "3" ]; then
 sed -i "4s,.*,ip '10.1.89.130:8000',g" /usr/bin/assh/profile.txt
 sed -i "5s,.*,proxy '10.1.89.130',g" /usr/bin/assh/profile.txt
 sed -i "6s,.*,port '8000',g" /usr/bin/assh/profile.txt
-echo
-echo -e " \e[36;1mSukses merubah Proxy ke\e[0m \e[33;1m10.1.89.130\e[0m"
-echo -e " \e[36;1mSukses merubah Port ke\e[0m \e[33;1m8000\e[0m"
-echo
-continue
- fi
- if [ $pxy == "4" ]; then
-clear
+time=$(date|awk -F ' ' '{print $4}');echo -e " \e[36;1m($time)\e[0m \e[32;1mSukses merubah Proxy ke\e[0m \e[33;1m10.1.89.130\e[0m"
+time=$(date|awk -F ' ' '{print $4}');echo -e " \e[36;1m($time)\e[0m \e[32;1mSukses merubah Port ke\e[0m \e[33;1m8000\e[0m"
+ elif [ $pxy == "4" ]; then
 sed -i "4s,.*,ip '10.4.0.10:3128',g" /usr/bin/assh/profile.txt
 sed -i "5s,.*,proxy '10.4.0.10',g" /usr/bin/assh/profile.txt
 sed -i "6s,.*,port '3128',g" /usr/bin/assh/profile.txt
-echo
-echo -e " \e[36;1mSukses merubah Proxy ke\e[0m \e[33;1m10.4.0.10\e[0m"
-echo -e " \e[36;1mSukses merubah Port ke\e[0m \e[33;1m3128\e[0m"
-echo
-continue
- fi
- if [ $pxy == "5" ]; then
-clear
+time=$(date|awk -F ' ' '{print $4}');echo -e " \e[36;1m($time)\e[0m \e[32;1mSukses merubah Proxy ke\e[0m \e[33;1m10.4.0.10\e[0m"
+time=$(date|awk -F ' ' '{print $4}');echo -e " \e[36;1m($time)\e[0m \e[32;1mSukses merubah Port ke\e[0m \e[33;1m3128\e[0m"
+ elif [ $pxy == "5" ]; then
 sed -i "4s,.*,ip '10.19.19.19:8080',g" /usr/bin/assh/profile.txt
 sed -i "5s,.*,proxy '10.19.19.19',g" /usr/bin/assh/profile.txt
 sed -i "6s,.*,port '8080',g" /usr/bin/assh/profile.txt
-echo
-echo -e " \e[36;1mSukses merubah Proxy ke\e[0m \e[33;1m10.19.19.19\e[0m"
-echo -e " \e[36;1mSukses merubah Port ke\e[0m \e[33;1m8080\e[0m"
-echo
-continue
- fi
- if [ $pxy == "6" ]; then
+time=$(date|awk -F ' ' '{print $4}');echo -e " \e[36;1m($time)\e[0m \e[32;1mSukses merubah Proxy ke\e[0m \e[33;1m10.19.19.19\e[0m"
+time=$(date|awk -F ' ' '{print $4}');echo -e " \e[36;1m($time)\e[0m \e[32;1mSukses merubah Port ke\e[0m \e[33;1m8080\e[0m"
+ elif [ $pxy == "6" ]; then
 clear
-echo
-echo -e " \e[36;1mKetik Squid Proxy(manual) Contoh:10.169.69.69:8080\e[0m"
-echo -e " \e[36;1mKosongkan dan ENTER untuk kembali:\e[0m"
+echo -e " \e[32;1m#######################################################\e[0m"
+echo -e " \e[32;1m##\e[0m       \e[35;1mPerbarui Mode Inject - Payload & BUG\e[0m        \e[32;1m##\e[0m"
+echo -e " \e[32;1m#######################################################\e[0m"
+time=$(date|awk -F ' ' '{print $4}');echo -e " \e[36;1m($time)\e[0m \e[32;1mGanti Proxy Server:\e[0m"
+echo -e " \e[32;1m#######################################################\e[0m"
+time=$(date|awk -F ' ' '{print $4}');echo -e " \e[36;1m($time)\e[0m \e[32;1mKetik Proxy Manual (Contoh: 10.169.69.69:80)\e[0m"
+time=$(date|awk -F ' ' '{print $4}');echo -e " \e[36;1m($time)\e[0m \e[32;1mKosongkan dan ENTER untuk kembali\e[0m"
  read -p " " sqy
   if [ -f $sqy ]; then
 clear
-echo
-echo -e " \e[31;3m================ PROXY GAGAL DISIMPAN! ================\e[0m"
-echo
+echo -e " \e[32;1m#######################################################\e[0m"
+echo -e " \e[32;3m##\e[0m            \e[31;3mPROXY SERVER GAGAL DISIMPAN!\e[0m           \e[32;3m##\e[0m"
+echo -e " \e[32;1m#######################################################\e[0m"
+time=$(date|awk -F ' ' '{print $4}');echo -e " \e[36;1m($time)\e[0m \e[32;1mPilih Nomor:\e[0m"
 continue
 fi
 if [[ $sqy =~ ^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5]):[0-9]+$ ]]; then
-clear
 sed -i "4s,.*,ip '$sqy',g" /usr/bin/assh/profile.txt
 cat /usr/bin/assh/profile.txt|awk "NR==4"|awk -F "'" '{print $2}' | sed -e "s/:/ /" | while read proxy port 
 do
 sed -i "5s,.*,proxy '$proxy',g" /usr/bin/assh/profile.txt
 sed -i "6s,.*,port '$port',g" /usr/bin/assh/profile.txt
-echo
-echo -e " \e[36;1mSukses merubah Proxy ke\e[0m \e[33;1m$proxy\e[0m"
-echo -e " \e[36;1mSukses merubah Port ke\e[0m \e[33;1m$port\e[0m"
-echo
+time=$(date|awk -F ' ' '{print $4}');echo -e " \e[36;1m($time)\e[0m \e[32;1mSukses merubah Proxy ke\e[0m \e[33;1m$proxy\e[0m"
+time=$(date|awk -F ' ' '{print $4}');echo -e " \e[36;1m($time)\e[0m \e[32;1mSukses merubah Port ke\e[0m \e[33;1m$port\e[0m"
 done
-continue
 fi
 if [[ ! $sqy =~ ^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5]):[0-9]+$ ]]; then
 clear
-echo
-echo -e " \e[31;3m========== MASUKKAN PROXY:PORT DENGAN BENAR! ==========\e[0m"
-echo
+echo -e " \e[32;1m#######################################################\e[0m"
+echo -e " \e[32;3m##\e[0m         \e[31;3mMASUKAN PROXY:PORT DENGAN BENAR!\e[0m        \e[32;3m##\e[0m"
+echo -e " \e[32;1m#######################################################\e[0m"
+time=$(date|awk -F ' ' '{print $4}');echo -e " \e[36;1m($time)\e[0m \e[32;1mPilih Nomor:\e[0m"
 continue
  fi
- fi
- if [ $pxy == "7" ]; then
-clear
-echo
-echo -e " \e[31;3m============== PROXY GAGAL DISIMPAN! ==============\e[0m"
-echo
- exit
  fi
 if [ $no == "6" ]; then
 clear
 exit
 fi
 fi
-clear
 exit
 done
 }
@@ -1133,7 +1257,7 @@ read -p " Are you sure you want to continue? <y/N> " prompt
 if [[ $prompt == "y" || $prompt == "Y" || $prompt == "yes" || $prompt == "Yes" ]]; then
 #echo -e " \e[36;1mProses sedang berlangsung... 10%\e[0m"
 echo -e " \e[36;1mProses sedang berlangsung...\e[0m"
-opkg update && opkg install screen python-pip redsocks coreutils-timeout openssl-util curl ncat openssh-client
+opkg update && opkg install python-pip screen redsocks coreutils-timeout openssl-util curl ncat openssh-client
 #sleep 1
 #echo -e " \e[36;1mProses sedang berlangsung... 35%\e[0m"
 #sleep 1
@@ -1160,6 +1284,10 @@ elif [[ $cek == *"Chaos Calmer"* ]] && [[ $cek == *"sunxi"* ]]; then
 wget --no-check-certificate -N https://github.com/tbscrew/Openwrt-Tunnel/raw/master/cc/sunxi/sshpass_1.05-pulpstone_sunxi.ipk -P /tmp && cd /tmp && opkg install sshpass_1.05-pulpstone_sunxi.ipk
 else
 echo -e " \e[36;1mSSHPASS Version tidak terdeteksi. Silahkan contact ADMIN!\e[0m"
+fi
+cek=$(cat /etc/openwrt_r*)
+if [[ $cek == *"Chaos Calmer"* ]]; then
+opkg update && opkg install kmod-ipv6 ip6tables radvd ip 6to4
 fi
 echo -e " \e[36;1mProcess COMPLETE 100%\e[0m"
 sleep 2
@@ -1248,8 +1376,8 @@ case $1 in
  "stop")
  stop
 ;;
- "swsi")
- swsi
+ "finder")
+ finder
 ;;
  "update")
  update
@@ -1266,9 +1394,9 @@ echo -e "\e[32;1m##\e[0m \e[36;3mxderm rules\e[0m   \e[36;1m(Add Rules IPtables)
 echo -e "\e[32;1m##\e[0m \e[36;3mxderm setup\e[0m   \e[36;1m(Update Requirement)\e[0m                 \e[32;1m##\e[0m"
 echo -e "\e[32;1m##\e[0m \e[36;3mxderm start\e[0m   \e[36;1m(Mulai Menjalankan SSH)\e[0m              \e[32;1m##\e[0m"
 echo -e "\e[32;1m##\e[0m \e[36;3mxderm stop\e[0m    \e[36;1m(Hentikan Proses SSH)\e[0m                \e[32;1m##\e[0m"
-echo -e "\e[32;1m##\e[0m \e[36;3mxderm swsi\e[0m    \e[36;1m(Cari IP > Mulai SSH)\e[0m                \e[32;1m##\e[0m"
+echo -e "\e[32;1m##\e[0m \e[36;3mxderm finder\e[0m  \e[36;1m(Cari IP > Mulai SSH)\e[0m                \e[32;1m##\e[0m"
 echo -e "\e[32;1m##\e[0m \e[36;3mxderm update\e[0m  \e[36;1m(Update XDERM versi terbaru)\e[0m         \e[32;1m##\e[0m"
 echo -e "\e[32;1m########################################################\e[0m"
-echo -e "              \e[33;1mCurrent versi 3.1 Beta-Final\e[0m"
+echo -e "              \e[33;1mCurrent versi 3.2 Beta-Final\e[0m"
 echo -e "              \e[36;1mCopyright\e[0m\e[31;1m@\e[0m\e[34;1m FB\e[0m\e[31;1m:\e[0m\e[33;1mOpenwrt Tunnel\e[0m"
 echo
