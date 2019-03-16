@@ -843,9 +843,10 @@ ip=$(curl -s http://192.168.8.1/api/monitoring/status -H "Host: 192.168.8.1" -H 
 
  if [ $ip ]; then
 time=$(date|awk -F ' ' '{print $4}');echo -e " \e[36;1m($time)\e[0m \e[32;1mReconnecting...\e[0m \e[34;1m(OK)\e[0m"
- fi
 time=$(date|awk -F ' ' '{print $4}');echo -e " \e[36;1m($time)\e[0m \e[32;1mRECONNECT SUCCESS! IP Terbaru \e[0m\e[33;1m$ip\e[0m\n"
-
+ else
+time=$(date|awk -F ' ' '{print $4}');echo -e " \e[36;1m($time)\e[0m \e[32;1mReconnecting...\e[0m \e[31;1m(FAILED)\e[0m" 
+ fi
 # kill the spinner task
 kill $pid > /dev/null 2>&1
 ip=$(ifconfig  | grep 'inet addr:'| grep -v '127.0.0.1' | grep -v '192.168.1.1' | cut -d: -f2 | awk '{ print $1}' | head -c 9)
@@ -874,15 +875,24 @@ sed -i "3s,.*,        option 'pincode' '',g" /etc/config/3ginfo
 sed -i "4s,.*,        option 'http_port' '81',g" /etc/config/3ginfo
 sed -i "5s,.*,        option 'language' 'en',g" /etc/config/3ginfo
 sed -i "6s,.*,        option 'network' '4g',g" /etc/config/3ginfo
-data1=$(curl -s http://192.168.1.1:81/cgi-bin/onoff.sh)
-data2=$(curl -s http://192.168.1.1:81/cgi-bin/onoff.sh)
-sleep 8
+#data1=$(curl -s http://192.168.1.1:81/cgi-bin/onoff.sh)
+#data2=$(curl -s http://192.168.1.1:81/cgi-bin/onoff.sh)
+UP=$(ifstatus 4g | grep "\"up\": true")
+if [ -n "$UP" ]; then
+        ifdown 4g > /dev/null 2>&1
+        ifup 4g > /dev/null 2>&1
+else
+        ifup 4g > /dev/null 2>&1
+fi
+sleep 15
 ip=$(ifconfig  | grep 'inet addr:'| grep -v '127.0.0.1' | grep -v '192.168.1.1' | cut -d: -f2 | awk '{ print $1}')
 
  if [ $ip ]; then
 time=$(date|awk -F ' ' '{print $4}');echo -e " \e[36;1m($time)\e[0m \e[32;1mReconnecting...\e[0m \e[34;1m(OK)\e[0m"
- fi
 time=$(date|awk -F ' ' '{print $4}');echo -e " \e[36;1m($time)\e[0m \e[32;1mRECONNECT SUCCESS! IP Terbaru \e[0m\e[33;1m$ip\e[0m\n"
+ else
+time=$(date|awk -F ' ' '{print $4}');echo -e " \e[36;1m($time)\e[0m \e[32;1mReconnecting...\e[0m \e[31;1m(FAILED)\e[0m" 
+ fi
 
 # kill the spinner task
 kill $pid > /dev/null 2>&1
