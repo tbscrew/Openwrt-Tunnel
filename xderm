@@ -645,9 +645,9 @@ fi
 sleep 1;let n=$n+1
  done
 rm -rf /tmp/sshlog.txt;time=$(date|awk -F ' ' '{print $4}');echo -e " \e[36;1m($time)\e[0m \e[32;1mMenjalankan Redsocks & DNS...\e[0m"
-killall -q dnsmasq;sed -i "s/port=53/port=54/g" /var/etc/dnsmasq.conf
+killall -q dnsmasq;sed -i "s/port=53/port=54/g" /var/etc/dnsmasq.con*
 killall -q dnsmasq;mv -fn /etc/init.d/dnsmasq /etc/init.d/dnsmasq1
-killall -q dnsmasq;dnsmasq -C /var/etc/dnsmasq.conf -x /var/run/dnsmasq/dnsmasq.pid
+killall -q dnsmasq;dnsmasq -C /var/etc/dnsmasq.con* -x /var/run/dnsmasq/dnsmasq.pid
 mv -fn /etc/init.d/dnsmasq1 /etc/init.d/dnsmasq
 ###########################################################################################
 killall -q redsocks;echo "base { log_debug = off;log_info = on;log = \"syslog:local7\";
@@ -707,8 +707,13 @@ lines=\$(iptables -w -t nat -L PREROUTING --line-number -n|grep tcp|awk \"NR==1\
 reds=\$(iptables -w -t nat -L -n|grep REDSOCKS|awk -F \" \" '{print \$1}')
 [[ -z \$reds ]] || { iptables -w -t nat -F REDSOCKS;iptables -w -t nat -X REDSOCKS; }
 killall -q sshpass redsocks;echo -n -e \"\e[31;1mSSH DISSCONNECT!\e[0m [\$n]\";let h=\$h+1
+modes=\$(cat \$cdir/assh/profile.txt|awk \"NR==1\"|awk -F \"'\" '{print \$2}')
+if [ \$modes -eq 2 ]; then
+screen -d -m sshpass -p \$pass ssh -oStrictHostKeyChecking=no -CND :8888 -p 443 \$user@\$host -o \"Proxycommand=ncat --proxy-type http --proxy 127.0.0.1:3339 %h %p\"
+elif [ \$modes -eq 1 ]; then
 screen -d -m sshpass -p \$pass ssh -oStrictHostKeyChecking=no -CND :8888 -p \$port \$user@\$host -o \"Proxycommand=ncat --proxy-type http --proxy 127.0.0.1:3339 %h %p\"
-sleep 5
+fi
+sleep 4
 iptables -t nat -N REDSOCKS
 iptables -t nat -A REDSOCKS -d 0.0.0.0/8 -j ACCEPT
 iptables -t nat -A REDSOCKS -d 10.0.0.0/8 -j ACCEPT
@@ -773,7 +778,7 @@ echo -e " \e[32;1m##\e[0m               \e[35;1mXDERM SSH Auto Stopper\e[0m     
 echo -e " \e[32;1m#######################################################\e[0m"
 dns1=$(cat /tmp/resolv.conf.auto|grep name|awk "NR==1"|awk -F " " '{print $2}')
 dns2=$(cat /tmp/resolv.conf.auto|grep name|awk "NR==2"|awk -F " " '{print $2}')
-killall -q redsocks dnsmasq sshpass bot.sh
+killall -q redsocks dnsmasq sshpass bot.sh;/etc/init.d/dnsmasq start > /dev/null 2>&1
 outp=$(iptables -w -t nat -L OUTPUT --line-number -n|grep REDSOCKS|awk -F " " '{print $1}')
 [[ -z $outp ]] || { iptables -w -t nat -F OUTPUT; }
  while true; do
